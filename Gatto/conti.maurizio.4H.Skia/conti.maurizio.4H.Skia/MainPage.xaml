@@ -6,6 +6,30 @@
              x:Class="conti.maurizio._4H.Skia.MainPage">
 
     <Grid>
-        <skiaforms:SKCanvasView x:Name="canvasView" PaintSurface="OnCanvasViewPaintSurface"/>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackLayout Grid.Row="0" VerticalOptions="StartAndExpand" BackgroundColor="Bisque" Orientation="Horizontal">
+
+            <Button Margin="5" 
+                    WidthRequest="100" HeightRequest="40" 
+                    HorizontalOptions="Start"  
+                    VerticalOptions="CenterAndExpand"
+                    Text="Apri File" 
+                    Clicked="btnApri_click"></Button>
+
+            <Button Margin="5" 
+                    WidthRequest="100" HeightRequest="40" 
+                    HorizontalOptions="Start"  
+                    VerticalOptions="CenterAndExpand"
+                    Text="Griglia" 
+                    Clicked="btnGliglia_click"></Button>
+            
+        </StackLayout>
+        
+        <skiaforms:SKCanvasView Grid.Row="1" x:Name="canvasView" PaintSurface="OnCanvasViewPaintSurface"/>
+    
     </Grid>
 </ContentPage>
