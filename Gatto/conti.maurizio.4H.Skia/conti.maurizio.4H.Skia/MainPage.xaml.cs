@@ -9,7 +9,8 @@ using Xamarin.Forms;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System.Diagnostics;
-
+using Xamarin.Essentials;
+using System.IO;
 
 // https://docs.microsoft.com/it-it/xamarin/xamarin-forms/user-interface/graphics/skiasharp/paths/polylines
 
@@ -69,19 +70,52 @@ namespace conti.maurizio._4H.Skia
             canvas.DrawPath(path, paint);
         }
 
-        private void btnApri_click(object sender, EventArgs e)
+        private async void btnApri_click(object sender, EventArgs e)
         {
             gatto.Clear();
 
-            gatto.Add(new SKPoint(1, 5));
-            gatto.Add(new SKPoint(1, 3));
-            gatto.Add(new SKPoint(2, 2));
-            gatto.Add(new SKPoint(3, 2));
-            gatto.Add(new SKPoint(4, 3));
-            gatto.Add(new SKPoint(4, 5));
-            gatto.Add(new SKPoint(3, 4));
-            gatto.Add(new SKPoint(2, 4));
-            gatto.Add(new SKPoint(1, 5));
+            // Documentazione
+            // https://docs.microsoft.com/it-it/xamarin/essentials/file-system-helpers?tabs=ios
+
+            // Tre sistemi: cache, appdata, packages
+
+            // cache: (dati che la piattaforma cancella quando vuole, senza preavviso)
+            var cacheDir = FileSystem.CacheDirectory;
+
+            // app data: (dati utente tenuti in backup dalla piattaforma)
+            var mainDir = FileSystem.AppDataDirectory;
+
+            // packages: (file che alleghiamo al nostro eseguibile.
+            // per UWP: Aggiungere i file nella radice del progetto UWP e contrassegnare l'azione di compilazione come Content per usarla con OpenAppPackageFileAsync.
+            // per Android: Aggiungere i file nella cartella Assets del progetto Android e contrassegnare l'azione di compilazione come AndroidAsset per usarla con OpenAppPackageFileAsync.
+            // per iOS: Aggiungere i file nella cartella Resources del progetto iOS e contrassegnare l'azione di compilazione come BundledResource per usarla con OpenAppPackageFileAsync.
+
+            using (var stream = await FileSystem.OpenAppPackageFileAsync("gatto.csv"))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        string str = reader.ReadLine();
+                        string[] colonne = str.Split(';');
+                        float X, Y;
+                        float.TryParse(colonne[0], out X);
+                        float.TryParse(colonne[1], out Y);
+
+                        gatto.Add(new SKPoint(X, Y));
+                    }
+                }
+            }
+
+            //gatto.Add(new SKPoint(1, 5));
+            //gatto.Add(new SKPoint(1, 3));
+            //gatto.Add(new SKPoint(2, 2));
+            //gatto.Add(new SKPoint(3, 2));
+            //gatto.Add(new SKPoint(4, 3));
+            //gatto.Add(new SKPoint(4, 5));
+            //gatto.Add(new SKPoint(3, 4));
+            //gatto.Add(new SKPoint(2, 4));
+            //gatto.Add(new SKPoint(1, 5));
 
             canvasView.InvalidateSurface();
         }
